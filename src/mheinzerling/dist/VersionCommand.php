@@ -13,7 +13,7 @@ class VersionCommand extends Command
     {
         $this->setName('version')
             ->setAliases(array())
-            ->setDescription('Generate the version description');
+            ->setDescription('Display the current working dir version');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
