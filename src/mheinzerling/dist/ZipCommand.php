@@ -26,11 +26,14 @@ class ZipCommand extends Command
             "vendor/swiftmailer/swiftmailer/doc", "vendor/swiftmailer/swiftmailer/notes", "vendor/swiftmailer/swiftmailer/test-suite",
             "/Test", "/Tests", "/test", "/tests", "/deploy", "/override", ".gitignore", "composer.phar", "composer.lock", "composer.json",
             "/DEBUG", "/example", "/bin",
-            "LICENSE", "README", "CHANGELOG.md", "phpunit.xml.dist", "README.md", "build.xml", "CHANGES", "phpunit.xml",
-            "create_pear_package.php", "package.xml.tpl", ".travis.yml", ".exe", "installed.json"
+            "LICENSE", "README", "CHANGELOG.md", "phpunit.xml.dist", "README.md", "build.xml", "CHANGES", "phpunit.xml", "entities.json",
+            "create_pear_package.php", "package.xml.tpl", ".travis.yml", ".exe", "installed.json", "Security/Acl", "openid/identifier_request.html"
         );
+        $allowedExtensions = array(".php", ".jpg", ".png", ".gif", ".xlf");
 
-        $root = FileUtils::to(realpath(__DIR__ . '/../../..') . "/", FileUtils::UNIX);
+        $root = stristr(__DIR__, "vendor") !== false ? __DIR__ . '/../../../../../..' : __DIR__ . '/../../..';
+        $root = FileUtils::to(realpath($root) . "/", FileUtils::UNIX);
+        $output->writeln($root);
         $version = GitUtils::getVersion();
         $archiveFile = $root . 'deploy/dist.' . $version . '.zip';
         $versionFile = $root . "VERSION";
@@ -62,8 +65,10 @@ class ZipCommand extends Command
                     $archive->addFile($override, $pathInArchive);
                     $output->writeln("Use override for '" . $pathInArchive);
                 } else {
-                    if (!StringUtils::endsWith($pathInArchive, ".php")) {
-                        $output->writeln("Add non-php file: " . $pathInArchive . "                          ");
+                    $ext = substr($pathInArchive, -4);
+
+                    if (!in_array($ext, $allowedExtensions)) {
+                        $output->writeln(str_pad("Add non-php file: " . $pathInArchive, 75, " ", STR_PAD_RIGHT));
                     }
                     $archive->addFile($realPath, $pathInArchive);
                 }
@@ -72,7 +77,7 @@ class ZipCommand extends Command
             $zippedFileCount++;
             $output->write("Reading directory... " . $totalFileCount . "->" . $zippedFileCount . "\r");
         }
-        $output->writeln("Read " . $totalFileCount . " files and zipped " . $zippedFileCount . ".                               ");
+        $output->writeln(str_pad("Read " . $totalFileCount . " files and zipped " . $zippedFileCount . ". ", 75, " ", STR_PAD_RIGHT));
         $archive->setArchiveComment('Version ' . $version);
         $archive->close();
         $output->writeln("Done");
