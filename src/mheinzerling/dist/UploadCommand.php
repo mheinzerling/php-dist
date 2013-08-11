@@ -3,34 +3,31 @@
 namespace mheinzerling\dist;
 
 
+use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\FtpConnection;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UploadCommand extends Command
+class UploadCommand extends DeploymentDescriptorAwareCommand
 {
-    protected function configure()
+    protected function innerConfigure()
     {
         $this->setName('upload')
             ->setAliases(array())
             ->setDescription('Upload dist to server');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function innerExecute(array $config, InputInterface $input, OutputInterface $output)
     {
-        $server = "test.example.com";
-        $user = "username";
-        $password = "password";
-        $remoteDeployDir = "deploy";
-        $remote = "";
-        $localDeployDir = "deploy" . $remote; //TODO root
+        $fs = new FileSystemHelper($config);
+        $remoteDistDir = $fs->getRemoteDistDir();
+        $localDistDir = $fs->getLocalDistDir();
 
-        $ftp = new FtpConnection($server, $user, $password);
+        $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
 
 
-        $remoteFiles = array_flip($ftp->ls($remoteDeployDir, '@dist.*\.zip@', true));
-        $localFiles = array_map("basename", glob($localDeployDir . "/dist*.zip"));
+        $remoteFiles = array_flip($ftp->ls($remoteDistDir, '@dist.*\.zip@', true));
+        $localFiles = array_map("basename", glob($localDistDir . "/dist*.zip"));
 
         $selection = array("0" => "Abort");
         foreach ($localFiles as $file) {
@@ -43,10 +40,21 @@ class UploadCommand extends Command
 
         if ($choice == null) $output->writeln("Abort upload");
         else {
-            $name = $selection[$choice];
-            $ftp->upload('/' . $remoteDeployDir . '/' . $name, $localDeployDir . '/' . $name, FTP_BINARY);
+            $name = str_replace(" (Overwrite)", "", $selection[$choice]);
+
+            $source = FileUtils::append($localDistDir, $name);
+            $progress = $this->getHelper("progress");
+            $progress->start($output, filesize($source));
+
+            $callback = function ($serverSize, $localSize) use ($progress) {
+                $progress->setCurrent($serverSize, true);
+                //$output->writeln(round($serverSize * 100 / $localSize));
+            };
+
+            $ftp->upload(FileUtils::append($remoteDistDir, $name), $source, FTP_BINARY, $callback);
         }
 
-
+        //TODO upload deploy.php
     }
+
 }

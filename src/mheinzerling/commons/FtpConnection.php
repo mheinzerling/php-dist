@@ -35,11 +35,27 @@ class FtpConnection
         ftp_quit($this->connection_id);
     }
 
-    public function upload($target, $source, $mode = FTP_ASCII)
+    /**
+     * @param callable $progressCallback with parameters $serverSize and $localSize
+     */
+    public function upload($target, $source, $mode = FTP_ASCII, \Closure $progressCallback = null)
     {
-        $upload = ftp_put($this->connection_id, $target, $source, $mode);
-        if (!$upload) {
+        $localSize = filesize($source);
+        $fh = fopen($source, "r");
+        $ret = ftp_nb_fput($this->connection_id, $target, $fh, $mode);
+        while ($ret == FTP_MOREDATA) {
+            if ($progressCallback != null) {
+                $serverSize = ftell($fh);
+                $progressCallback($serverSize, $localSize);
+            }
+            $ret = ftp_nb_continue($this->connection_id);
+        }
+
+        if ($ret != FTP_FINISHED) {
             throw new \Exception("Connection failed"); //TODO
+        }
+        if ($progressCallback != null) {
+            $progressCallback($localSize, $localSize);
         }
     }
 }

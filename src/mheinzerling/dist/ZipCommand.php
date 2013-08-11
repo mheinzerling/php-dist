@@ -6,40 +6,32 @@ namespace mheinzerling\dist;
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\GitUtils;
 use mheinzerling\commons\StringUtils;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ZipCommand extends Command
+class ZipCommand extends DeploymentDescriptorAwareCommand
 {
 
-    protected function configure()
+    protected function innerConfigure()
     {
         $this->setName('zip')
             ->setAliases(array())
             ->setDescription('Generate a dist file ');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function innerExecute(array $config, InputInterface $input, OutputInterface $output)
     {
-        $filters = array(".git", ".idea", "vendor/phpunit", "vendor/bin",
-            "vendor/swiftmailer/swiftmailer/doc", "vendor/swiftmailer/swiftmailer/notes", "vendor/swiftmailer/swiftmailer/test-suite",
-            "/Test", "/Tests", "/test", "/tests", "/deploy", "/override", ".gitignore", "composer.phar", "composer.lock", "composer.json",
-            "/DEBUG", "/example", "/bin",
-            "LICENSE", "README", "CHANGELOG.md", "phpunit.xml.dist", "README.md", "build.xml", "CHANGES", "phpunit.xml", "entities.json",
-            "create_pear_package.php", "package.xml.tpl", ".travis.yml", ".exe", "installed.json", "Security/Acl", "openid/identifier_request.html"
-        );
-        $allowedExtensions = array(".php", ".jpg", ".png", ".gif", ".xlf");
+        $filters = $config['zip']['ignore'];
+        $allowedExtensions = $config['zip']['expectedExtensions'];
 
-        $root = stristr(__DIR__, "vendor") !== false ? __DIR__ . '/../../../../../..' : __DIR__ . '/../../..';
-        $root = FileUtils::to(realpath($root) . "/", FileUtils::UNIX);
-        $output->writeln($root);
+        $fs = new FileSystemHelper($config);
+
         $version = GitUtils::getVersion();
-        $archiveFile = $root . 'deploy/dist.' . $version . '.zip';
-        $versionFile = $root . "VERSION";
+        $archiveFile = $fs->getLocalDist($version);
+        $versionFile = $fs->getLocalVersionFile();
 
         FileUtils::createFile($versionFile, $version);
-        $output->writeln("Create file " . $archiveFile . " from " . $root);
+        $output->writeln("Create file " . $archiveFile . " from " . $fs->getRoot());
         FileUtils::createFile($archiveFile, "");
         $archive = new \ZipArchive();
         $archive->open($archiveFile, \ZipArchive::OVERWRITE);
@@ -48,7 +40,7 @@ class ZipCommand extends Command
         $totalFileCount = 0;
 
         echo "Reading directory ...\r";
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS), \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = $fs->getProjectIterator();
         foreach ($iterator as $file) {
             $totalFileCount++;
             $realPath = FileUtils::to($file->getRealpath(), FileUtils::UNIX);
@@ -56,19 +48,18 @@ class ZipCommand extends Command
                 if (strstr($realPath, $filter) !== false) continue 2;
             }
 
-            $pathInArchive = str_replace($root, '', $realPath);
+            $pathInArchive = $fs->createArchivePath($realPath);
             if ($file->isDir()) {
                 $archive->addEmptyDir($pathInArchive . '/');
             } else {
-                $override = str_replace($root, $root . '/override/', $realPath); //TODO as parameter for multiple targets
-                if (file_exists($override)) {
-                    $archive->addFile($override, $pathInArchive);
-                    $output->writeln("Use override for '" . $pathInArchive);
+                $overwrite = $fs->toOverwritePath($realPath);
+                if (file_exists($overwrite)) {
+                    $archive->addFile($overwrite, $pathInArchive);
+                    $output->writeln("Use overwrite for '" . $pathInArchive);
                 } else {
                     $ext = substr($pathInArchive, -4);
-
                     if (!in_array($ext, $allowedExtensions)) {
-                        $output->writeln(str_pad("Add non-php file: " . $pathInArchive, 75, " ", STR_PAD_RIGHT));
+                        $output->writeln(str_pad("Add unexpected file: " . $pathInArchive, 75, " ", STR_PAD_RIGHT));
                     }
                     $archive->addFile($realPath, $pathInArchive);
                 }

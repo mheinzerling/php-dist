@@ -1,0 +1,60 @@
+{
+  "name": "test.example.com",
+  "ftp": {
+    "server": "test.example.com",
+    "user": "username",
+    "password": "password",
+    "distDir": "deploy"
+  },
+  "local": {
+    "distDir": "deploy/test.example.com/dist",
+    "overwriteDir": "deploy/test.example.com/overwrite"
+  },
+  "zip": {
+    "expectedExtensions": [
+      ".php",
+      ".jpg",
+      ".png",
+      ".gif",
+      ".xlf"
+    ],
+    "ignore": [
+      ".git",
+      ".idea",
+      "vendor/phpunit",
+      "vendor/bin",
+      "vendor/swiftmailer/swiftmailer/doc",
+      "vendor/swiftmailer/swiftmailer/notes",
+      "vendor/swiftmailer/swiftmailer/test-suite",
+      "/Test",
+      "/Tests",
+      "/test",
+      "/tests",
+      "/deploy",
+      "/overwrite",
+      ".gitignore",
+      "composer.phar",
+      "composer.lock",
+      "composer.json",
+      "/DEBUG",
+      "/example",
+      "/bin",
+      "LICENSE",
+      "README",
+      "CHANGELOG.md",
+      "phpunit.xml.dist",
+      "README.md",
+      "build.xml",
+      "CHANGES",
+      "phpunit.xml",
+      "entities.json",
+      "create_pear_package.php",
+      "package.xml.tpl",
+      ".travis.yml",
+      ".exe",
+      "installed.json",
+      "Security/Acl",
+      "openid/identifier_request.html"
+    ]
+  }
+}
