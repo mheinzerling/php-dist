@@ -60,7 +60,7 @@ class ZipCommand extends Command
             if ($file->isDir()) {
                 $archive->addEmptyDir($pathInArchive . '/');
             } else {
-                $override = str_replace($root, $root . '/override/', $realPath);
+                $override = str_replace($root, $root . '/override/', $realPath); //TODO as parameter for multiple targets
                 if (file_exists($override)) {
                     $archive->addFile($override, $pathInArchive);
                     $output->writeln("Use override for '" . $pathInArchive);
