@@ -28,6 +28,21 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
 
         $content = $ftp->get($rootHtaccess);
         $currentVersion = preg_replace("@.*(dist\..*)/.*@ism", "\\1", $content);
+        $opts = array('http' =>
+
+            array(
+                'method' => 'GET',
+                'header' => "Content-Type: text/html\r\n" .
+                    "Authorization: Basic " . base64_encode($config["remote"]["authuser"] . ":" . $config["remote"]["authpwd"]) . "\r\n",
+                'content' => '',
+                'timeout' => 60
+            )
+        );
+
+        $context = stream_context_create($opts);
+        $unzip = file_get_contents($fs->getUnzipUrl(), false, $context, -1, 40000);
+
+        $output->writeln("Unzip result:\n" . $unzip);
 
         $output->writeln("Current version:" . $currentVersion);
 

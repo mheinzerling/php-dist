@@ -86,4 +86,9 @@ class FileSystemHelper
     {
         return $this->root;
     }
+
+    public function getUnzipUrl()
+    {
+        return FileUtils::append("http://" . FileUtils::append($this->config['remote']['url'], $this->getRemoteScriptDir()), "unzip.php");
+    }
 }

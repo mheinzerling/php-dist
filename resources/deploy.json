@@ -11,7 +11,8 @@
     "scriptDir": "deploy",
     "authuser": "test",
     "authpwd": "test",
-    "htaccess": "AddHandler php53-cgi .php"
+    "htaccess": "AddHandler php53-cgi .php",
+    "url": "test.example.com"
   },
   "local": {
     "distDir": "deploy/test.example.com/dist",
