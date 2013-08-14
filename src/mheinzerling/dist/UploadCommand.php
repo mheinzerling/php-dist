@@ -55,7 +55,8 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
 
             $this->uploadTemplate($ftp, $output, $resources . "unzip.php",
                 FileUtils::append($remoteScriptDir, "unzip.php"),
-                array('SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir()));
+                array('SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir(),
+                    'DEPLOY_DIR' => $fs->getAbsoluteRemoteDeployDir()));
             $this->uploadTemplate($ftp, $output, $resources . "script.htaccess",
                 FileUtils::append($remoteScriptDir, ".htaccess"),
                 array('AUTH_USER_FILE' => FileUtils::append($fs->getAbsoluteRemoteScriptDir(), ".htpasswd"),

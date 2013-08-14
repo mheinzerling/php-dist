@@ -1,10 +1,11 @@
 <?php
 $scriptDir = realpath('SCRIPT_DIR');
+$deployDir = realpath('DEPLOY_DIR');
 
 $dists = glob($scriptDir . '/dist/dist*.zip');
 foreach ($dists as $dist) {
     $version = basename($dist, ".zip");
-    $path = $scriptDir . '/' . $version;
+    $path = $deployDir . '/' . $version;
 
     if (is_dir($path)) {
         echo "Skipping " . $dist . "\n";
