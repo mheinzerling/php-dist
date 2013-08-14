@@ -74,7 +74,7 @@ class FileSystemHelper
 
     {
         $overwriteDir = $this->config['local']['overwriteDir'];
-        return str_replace($this->root, $this->root . $overwriteDir, $realPath);
+        return str_replace($this->root, $this->root . $overwriteDir . "/", $realPath);
     }
 
     public function getProjectIterator()
