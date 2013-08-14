@@ -4,7 +4,14 @@
     "server": "test.example.com",
     "user": "username",
     "password": "password",
-    "distDir": "deploy"
+  },
+  "remote": {
+    "root": "/var/www/test",
+    "deployDir": "",
+    "scriptDir": "deploy",
+    "authuser": "test",
+    "authpwd": "test",
+    "htaccess": "AddHandler php53-cgi .php"
   },
   "local": {
     "distDir": "deploy/test.example.com/dist",

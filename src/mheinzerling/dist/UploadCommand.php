@@ -21,6 +21,7 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
     {
         $fs = new FileSystemHelper($config);
         $remoteDistDir = $fs->getRemoteDistDir();
+        $remoteScriptDir = $fs->getRemoteScriptDir();
         $localDistDir = $fs->getLocalDistDir();
 
         $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
@@ -29,7 +30,7 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
         $remoteFiles = array_flip($ftp->ls($remoteDistDir, '@dist.*\.zip@', true));
         $localFiles = array_map("basename", glob($localDistDir . "/dist*.zip"));
 
-        $selection = array("0" => "Abort");
+        $selection = array("0" => "Abort", "1" => "Deploy script");
         foreach ($localFiles as $file) {
             $exist = array_key_exists($file, $remoteFiles);
             $selection[] = $file . ($exist ? " (Overwrite)" : "");
@@ -38,23 +39,43 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
         $dialog = $this->getHelper("dialog");
         $choice = $dialog->select($output, "Select file to upload", $selection, 0);
 
-        if ($choice == null) $output->writeln("Abort upload");
-        else {
-            $name = str_replace(" (Overwrite)", "", $selection[$choice]);
 
-            $source = FileUtils::append($localDistDir, $name);
-            $progress = $this->getHelper("progress");
-            $progress->start($output, filesize($source));
-
-            $callback = function ($serverSize, $localSize) use ($progress) {
-                $progress->setCurrent($serverSize, true);
-                //$output->writeln(round($serverSize * 100 / $localSize));
-            };
-
-            $ftp->upload(FileUtils::append($remoteDistDir, $name), $source, FTP_BINARY, $callback);
+        if ($choice == 0) {
+            $output->writeln("Abort upload");
+            return;
         }
 
-        //TODO upload deploy.php
+        $progress = $this->getHelper("progress");
+        $callback = function ($serverSize, $localSize) use ($progress) {
+            $progress->setCurrent($serverSize, true);
+        };
+
+        if ($choice == 1) {
+            $resources = __DIR__ . "/../../../remote/";
+
+            $this->uploadTemplate($ftp, $output, $resources . "unzip.php",
+                FileUtils::append($remoteScriptDir, "unzip.php"),
+                array('SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir()));
+            $this->uploadTemplate($ftp, $output, $resources . "script.htaccess",
+                FileUtils::append($remoteScriptDir, ".htaccess"),
+                array('AUTH_USER_FILE' => FileUtils::append($fs->getAbsoluteRemoteScriptDir(), ".htpasswd"),
+                    'HTACCESS' => $config['remote']['htaccess']));
+
+            $this->uploadTemplate($ftp, $output, $resources . "script.htpasswd",
+                FileUtils::append($remoteScriptDir, ".htpasswd"),
+                array('USER' => $config['remote']['authuser'],
+                    'PWD' => crypt($config['remote']['authpwd'])));
+
+
+        } else {
+            $name = str_replace(" (Overwrite)", "", $selection[$choice]);
+            $source = FileUtils::append($localDistDir, $name);
+            $target = FileUtils::append($remoteDistDir, $name);
+            $progress->start($output, filesize($source));
+            $ftp->upload($target, $source, FTP_BINARY, $callback);
+
+        }
+
     }
 
 }

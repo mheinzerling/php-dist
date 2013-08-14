@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: User
- * Date: 11.08.13
- * Time: 11:13
- * To change this template use File | Settings | File Templates.
- */
 
 namespace mheinzerling\dist;
 
@@ -37,9 +30,34 @@ class FileSystemHelper
     }
 
 
+    public function getRemoteDeployDir()
+    {
+        return $this->config['remote']['deployDir'];
+    }
+
+    public function getAbsoluteRemoteDeployDir()
+    {
+        return FileUtils::append($this->config['remote']['root'], $this->config['remote']['deployDir']);
+    }
+
+    public function getRemoteScriptDir()
+    {
+        return $this->config['remote']['scriptDir'];
+    }
+
     public function getRemoteDistDir()
     {
-        return $this->config['ftp']['distDir'];
+        return FileUtils::append($this->getRemoteScriptDir(), "dist");
+    }
+
+    public function getAbsoluteRemoteDistDir()
+    {
+        return FileUtils::append($this->getAbsoluteRemoteScriptDir(), "dist");
+    }
+
+    public function getAbsoluteRemoteScriptDir()
+    {
+        return FileUtils::append($this->config['remote']['root'], $this->getRemoteScriptDir());
     }
 
     public function getLocalVersionFile()
@@ -63,7 +81,6 @@ class FileSystemHelper
     {
         return new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->root, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS), \RecursiveIteratorIterator::SELF_FIRST);
     }
-
 
     public function getRoot()
     {

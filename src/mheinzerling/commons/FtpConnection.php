@@ -36,12 +36,21 @@ class FtpConnection
     }
 
     /**
+     * @param $source String or fh
      * @param callable $progressCallback with parameters $serverSize and $localSize
      */
     public function upload($target, $source, $mode = FTP_ASCII, \Closure $progressCallback = null)
     {
-        $localSize = filesize($source);
-        $fh = fopen($source, "r");
+
+        if (is_resource($source)) {
+            $fh = $source;
+            $stats = fstat($fh);
+            $localSize = $stats['size'];
+        } else {
+
+            $localSize = filesize($source);
+            $fh = fopen($source, "r");
+        }
         $ret = ftp_nb_fput($this->connection_id, $target, $fh, $mode);
         while ($ret == FTP_MOREDATA) {
             if ($progressCallback != null) {
@@ -56,6 +65,17 @@ class FtpConnection
         }
         if ($progressCallback != null) {
             $progressCallback($localSize, $localSize);
+        }
+    }
+
+    public function get($target, $mode = FTP_ASCII, \Closure $progressCallback = null)
+    {
+        $temp = fopen('php://memory', 'r+');
+        if (ftp_fget($this->connection_id, $temp, $target, $mode, 0)) {
+            rewind($temp);
+            return stream_get_contents($temp);
+        } else {
+            throw new \Exception("Connection failed"); //TODO
         }
     }
 }

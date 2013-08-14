@@ -1,0 +1,8 @@
+RewriteEngine Off
+
+AuthName "Restricted Area"
+AuthType Basic
+AuthUserFile  AUTH_USER_FILE
+require valid-user
+
+HTACCESS

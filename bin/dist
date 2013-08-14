@@ -19,4 +19,5 @@ $application->setVersion("0.1");
 $application->add(new \mheinzerling\dist\VersionCommand());
 $application->add(new \mheinzerling\dist\ZipCommand());
 $application->add(new \mheinzerling\dist\UploadCommand());
+$application->add(new \mheinzerling\dist\DeployCommand());
 $application->run();
