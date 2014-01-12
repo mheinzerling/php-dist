@@ -1,11 +1,9 @@
 <?php
-
 namespace mheinzerling\dist;
 
 
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\GitUtils;
-use mheinzerling\commons\StringUtils;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -57,7 +55,7 @@ class ZipCommand extends DeploymentDescriptorAwareCommand
                     $archive->addFile($overwrite, $pathInArchive);
                     $output->writeln("Use overwrite for '" . $pathInArchive);
                 } else {
-                    $ext = substr($pathInArchive, -4);
+                    $ext = pathinfo($pathInArchive, PATHINFO_EXTENSION);
                     if (!in_array($ext, $allowedExtensions)) {
                         $output->writeln(str_pad("Add unexpected file: " . $pathInArchive, 75, " ", STR_PAD_RIGHT));
                     }
