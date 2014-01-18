@@ -1,5 +1,4 @@
 <?php
-
 namespace mheinzerling\dist;
 
 
@@ -53,6 +52,11 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
         if ($choice == 1) {
             $resources = __DIR__ . "/../../../remote/";
 
+            if (!$ftp->ls($remoteScriptDir)) {
+                $output->write("Creating >" . $remoteScriptDir . "< ...\n");
+                $ftp->mkdir($remoteScriptDir);
+            }
+
             $this->uploadTemplate($ftp, $output, $resources . "unzip.php",
                 FileUtils::append($remoteScriptDir, "unzip.php"),
                 array('SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir(),
@@ -69,6 +73,17 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
 
 
         } else {
+
+            if (!$ftp->ls($remoteScriptDir)) {
+                $output->write("Creating >" . $remoteScriptDir . "< ...\n");
+                $ftp->mkdir($remoteScriptDir);
+            }
+
+            if (!$ftp->ls($remoteDistDir)) {
+                $output->write("Creating >" . $remoteDistDir . "< ...\n");
+                $ftp->mkdir($remoteDistDir);
+            }
+
             $name = str_replace(" (Overwrite)", "", $selection[$choice]);
             $source = FileUtils::append($localDistDir, $name);
             $target = FileUtils::append($remoteDistDir, $name);
@@ -76,7 +91,5 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
             $ftp->upload($target, $source, FTP_BINARY, $callback);
 
         }
-
     }
-
 }

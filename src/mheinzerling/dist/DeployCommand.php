@@ -1,5 +1,4 @@
 <?php
-
 namespace mheinzerling\dist;
 
 
@@ -27,7 +26,11 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
 
         $content = $ftp->get($rootHtaccess);
-        $currentVersion = preg_replace("@.*(dist\..*)/.*@ism", "\\1", $content);
+        if ($content != null) {
+            $currentVersion = preg_replace("@.*(dist\..*)/.*@ism", "\\1", $content);
+        } else {
+            $currentVersion = "None";
+        }
         $opts = array('http' =>
 
             array(
@@ -44,7 +47,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
 
         $output->writeln("Unzip result:\n" . $unzip);
 
-        $output->writeln("Current version:" . $currentVersion);
+        $output->writeln("Current version: " . $currentVersion);
 
         $remoteFiles = $ftp->ls($remoteDeployDir, '@dist.*@', true);
 

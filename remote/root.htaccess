@@ -1,4 +1,4 @@
-DirectoryIndex  disabled
-
 RewriteEngine on
-RewriteRule ^(.*)$ /VERSION/$1 [L]
+
+RewriteCond %{REQUEST_FILENAME} !/VERSION
+RewriteRule .* /VERSION/$0 [L,QSA]

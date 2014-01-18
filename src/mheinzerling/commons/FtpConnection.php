@@ -20,6 +20,7 @@ class FtpConnection
     public function ls($dir = "", $filter = null, $basename = false)
     {
         $entries = ftp_nlist($this->connection_id, $dir);
+        if ($entries === false) return array();
         if ($filter == null && $basename == false) return $entries;
         $result = array();
         foreach ($entries as $entry) {
@@ -28,6 +29,11 @@ class FtpConnection
             if ($filter == null || preg_match($filter, $entry)) $result[] = $entry;
         }
         return $result;
+    }
+
+    public function mkdir($dir)
+    {
+        return ftp_mkdir($this->connection_id, $dir);
     }
 
     public function __destruct()
@@ -71,11 +77,12 @@ class FtpConnection
     public function get($target, $mode = FTP_ASCII, \Closure $progressCallback = null)
     {
         $temp = fopen('php://memory', 'r+');
-        if (ftp_fget($this->connection_id, $temp, $target, $mode, 0)) {
+        if (@ftp_fget($this->connection_id, $temp, $target, $mode, 0)) {
             rewind($temp);
             return stream_get_contents($temp);
         } else {
-            throw new \Exception("Connection failed"); //TODO
+            return null;
+            //throw new \Exception("Connection failed"); //TODO
         }
     }
 }
