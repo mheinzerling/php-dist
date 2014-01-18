@@ -24,8 +24,7 @@ class FtpConnection
         if ($filter == null && $basename == false) return $entries;
         $result = array();
         foreach ($entries as $entry) {
-            if ($basename) $entry = basename($entry, strlen($dir));
-
+            if ($basename) $entry = basename($entry, $dir);
             if ($filter == null || preg_match($filter, $entry)) $result[] = $entry;
         }
         return $result;
