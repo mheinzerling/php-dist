@@ -3,8 +3,6 @@
 namespace mheinzerling\commons;
 
 
-use mheinzerling\commons\Process;
-
 class GitUtils
 {
     public static function getVersion($annotated = false)
@@ -17,6 +15,10 @@ class GitUtils
         if ($p->getErr() == "fatal: No names found, cannot describe anything.\n") {
             $version = "preinitial-0-g0000000";
         }
+        if (strstr($p->getErr(), "fatal: Not a git repository")) {
+            return null;
+        }
+
         $branch = self::getCurrentBranch();
         if ($branch != "master") $version = preg_replace("@-(\\d+)-g@", '-' . $branch . '-\\1-g', $version);
 
@@ -27,6 +29,9 @@ class GitUtils
     {
         $p = new Process("git status");
         $p->run(true);
+        if (strstr($p->getErr(), "fatal: Not a git repository")) {
+            return null;
+        }
         return stristr($p->getOut(), 'nothing to commit') === false;
     }
 
@@ -34,6 +39,9 @@ class GitUtils
     {
         $p = new Process("git symbolic-ref --short HEAD");
         $p->run(true);
+        if (strstr($p->getErr(), "fatal: Not a git repository")) {
+            return null;
+        }
         return trim($p->getOut());
 
     }

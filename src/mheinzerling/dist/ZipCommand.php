@@ -4,6 +4,7 @@ namespace mheinzerling\dist;
 
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\GitUtils;
+use mheinzerling\commons\SvnUtils;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -25,6 +26,9 @@ class ZipCommand extends DeploymentDescriptorAwareCommand
         $fs = new FileSystemHelper($config);
 
         $version = GitUtils::getVersion();
+        if ($version == null) $version = SvnUtils::getVersion();
+        if ($version == null) $version = "UNDEFINED";
+
         $archiveFile = $fs->getLocalDist($version);
         $versionFile = $fs->getLocalVersionFile();
 
