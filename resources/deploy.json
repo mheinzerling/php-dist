@@ -64,5 +64,15 @@
       "Security/Acl",
       "openid/identifier_request.html"
     ]
+  },
+  "callback": {
+    "afterDeploy": [
+      {
+        "url": "url",
+        "method": "GET",
+        "authuser": "user",
+        "authpwd": "password"
+      }
+    ]
   }
 }

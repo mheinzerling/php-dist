@@ -32,18 +32,8 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         } else {
             $currentVersion = "None";
         }
-        $opts = array('http' =>
-            array(
-                'method' => 'GET',
-                'header' => "Content-Type: text/html\r\n" .
-                    "Authorization: Basic " . base64_encode($config["remote"]["authuser"] . ":" . $config["remote"]["authpwd"]) . "\r\n",
-                'content' => '',
-                'timeout' => 60
-            )
-        );
-
-        $context = stream_context_create($opts);
-        $unzip = file_get_contents($fs->getUnzipUrl(), false, $context, -1, 40000);
+        $context = $this->createBasicAuthContext($config["remote"]["authuser"], $config["remote"]["authpwd"]);
+        $unzip = file_get_contents($fs->getUnzipUrl(), false, $context);
 
         $output->writeln("Unzip result:\n" . $unzip);
 
@@ -73,5 +63,34 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
 
         $this->uploadTemplate($ftp, $output, $template, $rootHtaccess,
             array('VERSION' => FileUtils::append($fs->getRemoteDeployDir(), $selection[$choice])));
+
+        if (!isset($config['callback'])) return;
+        if (!isset($config['callback']['afterDeploy'])) return;
+        foreach ($config['callback']['afterDeploy'] as $callback) {
+            $output->writeln("Calling " . $callback['url'] . " ...");
+            if (isset($callback['authuser']) && isset($callback['authpwd'])) {
+                $context = $this->createBasicAuthContext($callback['authuser'], $callback['authpwd'], $callback['method']);
+                $output->writeln("with context " . $callback['authuser'] . " " . $callback['authpwd'] . " " . $callback['method']);
+            } else {
+                $context = null;
+            }
+
+            $result = file_get_contents($callback['url'], false, $context);
+            $output->writeln($result);
+        }
+    }
+
+    protected function createBasicAuthContext($user, $password, $method = "GET")
+    {
+        $opts = array('http' =>
+            array(
+                'method' => $method,
+                'header' => "Content-Type: text/html\r\n" .
+                    "Authorization: Basic " . base64_encode($user . ":" . $password) . "\r\n",
+                'content' => '',
+                'timeout' => 60
+            )
+        );
+        return stream_context_create($opts);
     }
 }
