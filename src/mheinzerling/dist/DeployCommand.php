@@ -4,6 +4,7 @@ namespace mheinzerling\dist;
 
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\FtpConnection;
+use Symfony\Component\Console\Helper\DialogHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,12 +28,11 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
 
         $content = $ftp->get($rootHtaccess);
         if ($content != null) {
-            $currentVersion = preg_replace("@.*(dist\..*)/.*@ism", "\\1", $content);
+            $currentVersion = preg_replace("@.*(dist\\..*)/.*@ism", "\\1", $content);
         } else {
             $currentVersion = "None";
         }
         $opts = array('http' =>
-
             array(
                 'method' => 'GET',
                 'header' => "Content-Type: text/html\r\n" .
@@ -57,6 +57,9 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
             $selection[] = $file;
         }
 
+        /**
+         * @var DialogHelper
+         */
         $dialog = $this->getHelper("dialog");
         $choice = $dialog->select($output, "Select dist to deploy", $selection, 0);
 
