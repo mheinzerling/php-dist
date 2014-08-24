@@ -23,6 +23,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         $fs = new FileSystemHelper($config);
         $remoteDeployDir = $fs->getRemoteDeployDir();
         $rootHtaccess = FileUtils::append($fs->getRemoteDeployDir(), ".htaccess");
+        $maintenance = isset($config['remote']['maintenance']) ? $config['remote']['maintenance'] : "";
 
         $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
 
@@ -32,7 +33,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         } else {
             $currentVersion = "None";
         }
-        $context = $this->createBasicAuthContext($config["remote"]["authuser"], $config["remote"]["authpwd"]);
+        $context = $this->createBasicAuthContext($config["remote"]["authuser"], $config["remote"]["authpwd"], $maintenance);
         $unzip = file_get_contents($fs->getUnzipUrl(), false, $context);
 
         $output->writeln("Unzip result:\n" . $unzip);
@@ -61,6 +62,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
 
         $template = __DIR__ . "/../../../remote/root.htaccess";
 
+        MaintenanceCommand::setMaintenance($ftp, $output, true);
         $this->uploadTemplate($ftp, $output, $template, $rootHtaccess,
             array('VERSION' => FileUtils::append($fs->getRemoteDeployDir(), $selection[$choice])));
 
@@ -69,7 +71,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         foreach ($config['callback']['afterDeploy'] as $callback) {
             $output->writeln("Calling " . $callback['url'] . " ...");
             if (isset($callback['authuser']) && isset($callback['authpwd'])) {
-                $context = $this->createBasicAuthContext($callback['authuser'], $callback['authpwd'], $callback['method']);
+                $context = $this->createBasicAuthContext($callback['authuser'], $callback['authpwd'], $maintenance, $callback['method']);
                 $output->writeln("with context " . $callback['authuser'] . " " . $callback['authpwd'] . " " . $callback['method']);
             } else {
                 $context = null;
@@ -78,9 +80,12 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
             $result = file_get_contents($callback['url'], false, $context);
             $output->writeln($result);
         }
+        if ($dialog->askConfirmation($output, "Disable maintenance mode?", false)) {
+            MaintenanceCommand::setMaintenance($ftp, $output, false);
+        }
     }
 
-    protected function createBasicAuthContext($user, $password, $method = "GET")
+    protected function createBasicAuthContext($user, $password, $agent = "", $method = "GET")
     {
         $opts = array('http' =>
             array(
@@ -88,6 +93,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
                 'header' => "Content-Type: text/html\r\n" .
                     "Authorization: Basic " . base64_encode($user . ":" . $password) . "\r\n",
                 'content' => '',
+                'user_agent' => $agent,
                 'timeout' => 60
             )
         );

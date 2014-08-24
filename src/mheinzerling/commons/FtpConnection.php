@@ -35,6 +35,11 @@ class FtpConnection
         return ftp_mkdir($this->connection_id, $dir);
     }
 
+    public function delete($file)
+    {
+        return ftp_delete($this->connection_id, $file);
+    }
+
     public function __destruct()
     {
         ftp_quit($this->connection_id);
@@ -52,7 +57,6 @@ class FtpConnection
             $stats = fstat($fh);
             $localSize = $stats['size'];
         } else {
-
             $localSize = filesize($source);
             $fh = fopen($source, "r");
         }

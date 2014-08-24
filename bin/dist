@@ -20,4 +20,5 @@ $application->add(new \mheinzerling\dist\VersionCommand());
 $application->add(new \mheinzerling\dist\ZipCommand());
 $application->add(new \mheinzerling\dist\UploadCommand());
 $application->add(new \mheinzerling\dist\DeployCommand());
+$application->add(new \mheinzerling\dist\MaintenanceCommand());
 $application->run();

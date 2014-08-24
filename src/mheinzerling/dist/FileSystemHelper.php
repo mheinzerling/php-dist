@@ -60,6 +60,11 @@ class FileSystemHelper
         return FileUtils::append($this->config['remote']['root'], $this->getRemoteScriptDir());
     }
 
+    public function getMaintenanceFlag()
+    {
+        return "maintenance";
+    }
+
     public function getLocalVersionFile()
     {
         return FileUtils::append($this->root, "VERSION");
