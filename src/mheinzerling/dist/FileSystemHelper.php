@@ -4,6 +4,7 @@ namespace mheinzerling\dist;
 
 
 use mheinzerling\commons\FileUtils;
+use mheinzerling\commons\StringUtils;
 
 class FileSystemHelper
 {
@@ -94,6 +95,16 @@ class FileSystemHelper
 
     public function getUnzipUrl()
     {
-        return FileUtils::append("http://" . FileUtils::append($this->config['remote']['url'], $this->getRemoteScriptDir()), "unzip.php");
+        $path = "http://" . $this->config['remote']['url'];
+        if ($this->hasPath()) $path = FileUtils::append($path, $this->config['remote']['path']);
+        return FileUtils::append(FileUtils::append($path, $this->getRemoteScriptDir()), "unzip.php");
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPath()
+    {
+        return isset($this->config['remote']['path']) && !StringUtils::isBlank($this->config['remote']['path']);
     }
 }

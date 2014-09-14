@@ -1,4 +1,4 @@
 RewriteEngine on
 
-RewriteCond %{REQUEST_FILENAME} !/VERSION
-RewriteRule .* /VERSION/$0 [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !/PATH/VERSION
+RewriteRule .* /PATH/VERSION/$0 [L,QSA]

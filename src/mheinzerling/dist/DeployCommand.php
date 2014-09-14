@@ -64,7 +64,11 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
 
         MaintenanceCommand::setMaintenance($ftp, $output, true);
         $this->uploadTemplate($ftp, $output, $template, $rootHtaccess,
-            array('VERSION' => FileUtils::append($fs->getRemoteDeployDir(), $selection[$choice])));
+            array(
+                'VERSION' => FileUtils::append($fs->getRemoteDeployDir(), $selection[$choice]),
+                '/PATH' => $fs->hasPath() ? ("/" . $config['remote']['path']) : ""
+            )
+        );
 
         if (!isset($config['callback'])) return;
         if (!isset($config['callback']['afterDeploy'])) return;
