@@ -11,6 +11,7 @@ class FtpConnection
     public function __construct($server, $user, $password)
     {
         $this->connection_id = ftp_connect($server);
+        ftp_pasv($this->connection_id, true);
         $login_result = ftp_login($this->connection_id, $user, $password);
         if ((!$this->connection_id) || (!$login_result)) {
             throw new \Exception("Connection failed"); //TODO
