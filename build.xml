@@ -1,0 +1,33 @@
+<project name="Dist" default="ci" basedir=".">
+    <target name="clean">
+        <delete dir="vendor"/>
+        <mkdir dir="ci"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="ci"/>
+    </target>
+
+    <condition property="composer.executable" value="composer.bat" else="composer">
+        <os family="windows"/>
+    </condition>
+
+    <target name="composer">
+        <exec executable="${composer.executable}" failonerror="true">
+            <arg line="install --no-progress"/>
+        </exec>
+    </target>
+
+    <condition property="phpunit.executable" value="vendor/bin/phpunit.bat" else="vendor/bin/phpunit">
+        <os family="windows"/>
+    </condition>
+
+    <target name="test">
+        <exec executable="${phpunit.executable}" failonerror="true">
+            <arg line="--log-junit ci/test.xml --coverage-clover ci/coverage.xml --coverage-html ci/coverage"/>
+        </exec>
+    </target>
+
+    <target name="ci" depends="clean,init,composer,test">
+    </target>
+</project>

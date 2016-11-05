@@ -1,0 +1,29 @@
+{
+  "name": "mheinzerling/dist",
+  "description": "Tool to publish webapps",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Martin Heinzerling",
+      "email": "webmaster@mheinzerling.de"
+    }
+  ],
+  "bin": [
+    "bin/dist"
+  ],
+  "require": {
+    "symfony/console": "2.3.*",
+    "mheinzerling/jsonutils": "1.0.*",
+    "mheinzerling/fileutils": "1.0.*",
+    "mheinzerling/stringutils": "1.0.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.2.*"
+  },
+  "autoload": {
+    "psr-0": {
+      "mheinzerling": "src/"
+    }
+  }
+}
