@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "601d16034921615b415ed6cf7c3a321d",
-    "content-hash": "f733784fb8109278b564a77b0b0b8a82",
+    "hash": "bcb2f9185c26b8e5a4986cd7378a9c95",
+    "content-hash": "f63c894fb56f47c0d9cffe29e6c4b142",
     "packages": [
         {
             "name": "mheinzerling/fileutils",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mheinzerling/php-fileutils.git",
-                "reference": "5dd990684f09cbbd93ae52242fd3b3f10e71047b"
+                "reference": "57bb1c7dd3114cbd0f7ce7dcfb59a64fe9c79c37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mheinzerling/php-fileutils/zipball/5dd990684f09cbbd93ae52242fd3b3f10e71047b",
-                "reference": "5dd990684f09cbbd93ae52242fd3b3f10e71047b",
+                "url": "https://api.github.com/repos/mheinzerling/php-fileutils/zipball/57bb1c7dd3114cbd0f7ce7dcfb59a64fe9c79c37",
+                "reference": "57bb1c7dd3114cbd0f7ce7dcfb59a64fe9c79c37",
                 "shasum": ""
             },
             "require": {
-                "mheinzerling/stringutils": "2.0.*",
-                "php": ">=7.0.0"
+                "mheinzerling/stringutils": "^2.0.0",
+                "php": "^7.0.0"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": "5.6.*"
+                "phpunit/phpunit": "^5.6.0"
             },
             "type": "library",
             "autoload": {
@@ -46,29 +46,29 @@
                 }
             ],
             "description": "File utils",
-            "time": "2016-11-02 17:29:10"
+            "time": "2016-11-07 19:12:54"
         },
         {
             "name": "mheinzerling/jsonutils",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mheinzerling/php-jsonutils.git",
-                "reference": "ff35d913c30c806e3aa617bf13898ae21d56de8c"
+                "reference": "fbff606f78f3ea1979d19b2d0610c51d28e259e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mheinzerling/php-jsonutils/zipball/ff35d913c30c806e3aa617bf13898ae21d56de8c",
-                "reference": "ff35d913c30c806e3aa617bf13898ae21d56de8c",
+                "url": "https://api.github.com/repos/mheinzerling/php-jsonutils/zipball/fbff606f78f3ea1979d19b2d0610c51d28e259e4",
+                "reference": "fbff606f78f3ea1979d19b2d0610c51d28e259e4",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0",
-                "seld/jsonlint": "1.4.*"
+                "php": "^7.0.0",
+                "seld/jsonlint": "^1.4.0"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": "5.6.*"
+                "phpunit/phpunit": "^5.6.0"
             },
             "type": "library",
             "autoload": {
@@ -89,28 +89,28 @@
                 }
             ],
             "description": "JSON utilities",
-            "time": "2016-11-02 05:26:06"
+            "time": "2016-11-07 19:18:04"
         },
         {
             "name": "mheinzerling/stringutils",
-            "version": "2.0.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mheinzerling/php-stringutils.git",
-                "reference": "363822c96748d93285a20350593b1f8759a258ca"
+                "reference": "556915f5eecf1fe85f6ff73f94a1a7a55e9b056b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mheinzerling/php-stringutils/zipball/363822c96748d93285a20350593b1f8759a258ca",
-                "reference": "363822c96748d93285a20350593b1f8759a258ca",
+                "url": "https://api.github.com/repos/mheinzerling/php-stringutils/zipball/556915f5eecf1fe85f6ff73f94a1a7a55e9b056b",
+                "reference": "556915f5eecf1fe85f6ff73f94a1a7a55e9b056b",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0"
+                "php": "^7.0.0"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": "5.6.*"
+                "phpunit/phpunit": "^5.6.0"
             },
             "type": "library",
             "autoload": {
@@ -129,7 +129,7 @@
                 }
             ],
             "description": "StringUtils class is similar to Apache Commons StringUtils for Java. It will be extended incrementally.",
-            "time": "2016-10-31 13:36:45"
+            "time": "2016-11-07 15:24:32"
         },
         {
             "name": "psr/log",
@@ -2253,7 +2253,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.0.0"
+        "php": "^7.0.0"
     },
     "platform-dev": []
 }

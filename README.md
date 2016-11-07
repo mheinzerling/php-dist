@@ -6,7 +6,7 @@ Tool to zip and deploy composer web application.
 
 ##Composer
     "require": {
-        "mheinzerling/dist": "2.0.*"
+        "mheinzerling/dist": "^2.0.1"
     },
     
 ##Changelog
