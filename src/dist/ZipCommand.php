@@ -1,9 +1,11 @@
 <?php
+declare(strict_types = 1);
 namespace mheinzerling\dist;
 
 
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\GitUtils;
+use mheinzerling\commons\Separator;
 use mheinzerling\commons\SvnUtils;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,14 +13,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ZipCommand extends DeploymentDescriptorAwareCommand
 {
 
-    protected function innerConfigure()
+    protected function innerConfigure(): void
     {
         $this->setName('zip')
-            ->setAliases(array())
+            ->setAliases([])
             ->setDescription('Generate a dist file ');
     }
 
-    protected function innerExecute(array $config, InputInterface $input, OutputInterface $output)
+    protected function innerExecute(array $config, InputInterface $input, OutputInterface $output): int
     {
         $filters = $config['zip']['ignore'];
         $allowedExtensions = $config['zip']['expectedExtensions'];
@@ -45,7 +47,7 @@ class ZipCommand extends DeploymentDescriptorAwareCommand
         $iterator = $fs->getProjectIterator();
         foreach ($iterator as $file) {
             $totalFileCount++;
-            $realPath = FileUtils::to($file->getRealpath(), FileUtils::UNIX);
+            $realPath = FileUtils::to($file->getRealpath(), Separator::UNIX());
             foreach ($filters as $filter) {
                 if (strstr($realPath, $filter) !== false) continue 2;
             }
@@ -74,6 +76,7 @@ class ZipCommand extends DeploymentDescriptorAwareCommand
         $archive->setArchiveComment('Version ' . $version);
         $archive->close();
         $output->writeln("Done");
+        return 0;
     }
 
 }

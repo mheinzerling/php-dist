@@ -1,11 +1,14 @@
 <?php
+declare(strict_types = 1);
 
 namespace mheinzerling\commons;
 
 
 class FtpConnection
 {
-
+    /**
+     * @var resource
+     */
     private $connection_id;
 
     public function __construct($server, $user, $password)
@@ -18,12 +21,19 @@ class FtpConnection
         }
     }
 
-    public function ls($dir = "", $filter = null, $basename = false)
+
+    /**
+     * @param string $dir
+     * @param string|null $filter
+     * @param bool $basename
+     * @return string[]
+     */
+    public function ls($dir = "", string $filter = null, $basename = false): array
     {
         $entries = ftp_nlist($this->connection_id, $dir);
-        if ($entries === false) return array();
+        if ($entries === false) return [];
         if ($filter == null && $basename == false) return $entries;
-        $result = array();
+        $result = [];
         foreach ($entries as $entry) {
             if ($basename) $entry = basename($entry, $dir);
             if ($filter == null || preg_match($filter, $entry)) $result[] = $entry;
@@ -31,12 +41,12 @@ class FtpConnection
         return $result;
     }
 
-    public function mkdir($dir)
+    public function mkdir(string $dir): string
     {
         return ftp_mkdir($this->connection_id, $dir);
     }
 
-    public function delete($file)
+    public function delete(string $file): bool
     {
         return ftp_delete($this->connection_id, $file);
     }
@@ -47,12 +57,14 @@ class FtpConnection
     }
 
     /**
-     * @param $source String or fh
-     * @param callable $progressCallback with parameters $serverSize and $localSize
+     * @param $target
+     * @param string|resource $source
+     * @param int $mode
+     * @param callable|\Closure $progressCallback with parameters $serverSize and $localSize
+     * @throws \Exception
      */
-    public function upload($target, $source, $mode = FTP_ASCII, \Closure $progressCallback = null)
+    public function upload(string $target, $source, int $mode = FTP_ASCII, \Closure $progressCallback = null): void
     {
-
         if (is_resource($source)) {
             $fh = $source;
             $stats = fstat($fh);
@@ -78,7 +90,7 @@ class FtpConnection
         }
     }
 
-    public function get($target, $mode = FTP_ASCII, \Closure $progressCallback = null)
+    public function get(string $target, $mode = FTP_ASCII, \Closure $progressCallback = null): ?string
     {
         $temp = fopen('php://memory', 'r+');
         if (@ftp_fget($this->connection_id, $temp, $target, $mode, 0)) {

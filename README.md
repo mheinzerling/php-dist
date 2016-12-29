@@ -6,10 +6,13 @@ Tool to zip and deploy composer web application.
 
 ##Composer
     "require": {
-        "mheinzerling/dist": "^2.0.1"
+        "mheinzerling/dist": "^3.0.0"
     },
     
 ##Changelog
+
+### 3.0.0
+update to PHP 7.1
 
 ### 2.0.0
 update to PHP 7

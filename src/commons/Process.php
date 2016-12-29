@@ -1,18 +1,34 @@
 <?php
+declare(strict_types = 1);
 
 namespace mheinzerling\commons;
 
 class Process
 {
+    /**
+     * @var string
+     */
     private $command;
 
+    /**
+     * @var string|null
+     */
     private $currentWorkingDir;
+    /**
+     * @var string|null
+     */
     private $out;
+    /**
+     * @var string|null
+     */
     private $err;
+    /**
+     * @var int|null
+     */
     private $returnValue;
 
 
-    function __construct($command, $currentWorkingDir = null)
+    function __construct(string $command, $currentWorkingDir = null)
     {
         $this->command = $command;
         $this->currentWorkingDir = $currentWorkingDir;
@@ -20,11 +36,11 @@ class Process
 
     function run($dieOnError = false)
     {
-        $descriptorSpec = array(
-            0 => array("pipe", "r"),
-            1 => array("pipe", "w"),
-            2 => array("pipe", "w")
-        );
+        $descriptorSpec = [
+            0 => ["pipe", "r"],
+            1 => ["pipe", "w"],
+            2 => ["pipe", "w"]
+        ];
 
         $process = proc_open($this->command, $descriptorSpec, $pipes, $this->currentWorkingDir);
 
@@ -48,31 +64,18 @@ class Process
         }
     }
 
-
-    /**
-     * @return String
-     */
-    public function getErr()
+    public function getErr():?string
     {
         return $this->err;
     }
 
-    /**
-     * @return String
-     */
-    public function getOut()
+    public function getOut():?string
     {
         return $this->out;
     }
 
-
-    /**
-     * @return String
-     */
-    public function getReturnValue()
+    public function getReturnValue():?int
     {
         return $this->returnValue;
     }
-
-
 }

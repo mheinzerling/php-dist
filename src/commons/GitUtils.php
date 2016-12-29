@@ -1,11 +1,12 @@
 <?php
+declare(strict_types = 1);
 
 namespace mheinzerling\commons;
 
 
 class GitUtils
 {
-    public static function getVersion($annotated = false)
+    public static function getVersion(bool $annotated = false): ?string
     {
         $cmd = "git describe --long --dirty=+";
         if (!$annotated) $cmd .= " --tags";
@@ -25,7 +26,7 @@ class GitUtils
         return $version;
     }
 
-    public static function hasLocalChanges()
+    public static function hasLocalChanges(): ?bool
     {
         $p = new Process("git status");
         $p->run(true);
@@ -35,7 +36,7 @@ class GitUtils
         return stristr($p->getOut(), 'nothing to commit') === false;
     }
 
-    public static function getCurrentBranch()
+    public static function getCurrentBranch(): ?string
     {
         $p = new Process("git symbolic-ref --short HEAD");
         $p->run(true);

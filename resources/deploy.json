@@ -3,7 +3,7 @@
   "ftp": {
     "server": "test.example.com",
     "user": "username",
-    "password": "password",
+    "password": "password"
   },
   "remote": {
     "root": "/var/www/test",

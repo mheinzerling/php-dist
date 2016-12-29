@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace mheinzerling\dist;
 
@@ -6,7 +7,7 @@ class DistTest extends \PHPUnit_Framework_TestCase
 {
     public function testDummy()
     {
-        $this->assertTrue(true);
+        static::assertTrue(true);
     }
 
 }

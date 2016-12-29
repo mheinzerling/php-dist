@@ -1,22 +1,25 @@
 <?php
+declare(strict_types = 1);
 namespace mheinzerling\dist;
 
 
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\FtpConnection;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class UploadCommand extends DeploymentDescriptorAwareCommand
 {
-    protected function innerConfigure()
+    protected function innerConfigure(): void
     {
         $this->setName('upload')
-            ->setAliases(array())
+            ->setAliases([])
             ->setDescription('Upload dist to server');
     }
 
-    protected function innerExecute(array $config, InputInterface $input, OutputInterface $output)
+    protected function innerExecute(array $config, InputInterface $input, OutputInterface $output): int
     {
         $fs = new FileSystemHelper($config);
         $remoteDistDir = $fs->getRemoteDistDir();
@@ -29,19 +32,22 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
         $remoteFiles = array_flip($ftp->ls($remoteDistDir, '@dist.*\.zip@', true));
         $localFiles = array_map("basename", glob($localDistDir . "/dist*.zip"));
 
-        $selection = array("0" => "Abort", "1" => "Deploy script");
+        $selection = ["0" => "Abort", "1" => "Deploy script"];
         foreach ($localFiles as $file) {
             $exist = array_key_exists($file, $remoteFiles);
             $selection[] = $file . ($exist ? " (Overwrite)" : "");
         }
 
-        $dialog = $this->getHelper("dialog");
-        $choice = $dialog->select($output, "Select file to upload", $selection, 0);
+        /**
+         * @var $dialog QuestionHelper
+         */
+        $dialog = $this->getHelper("question");
+        $choice = $dialog->ask($input, $output, new ChoiceQuestion("Select file to upload", $selection, 0));
 
 
         if ($choice == 0) {
             $output->writeln("Abort upload");
-            return;
+            return 0;
         }
 
         $progress = $this->getHelper("progress");
@@ -59,17 +65,17 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
 
             $this->uploadTemplate($ftp, $output, $resources . "unzip.php",
                 FileUtils::append($remoteScriptDir, "unzip.php"),
-                array('SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir(),
-                    'DEPLOY_DIR' => $fs->getAbsoluteRemoteDeployDir()));
+                ['SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir(),
+                    'DEPLOY_DIR' => $fs->getAbsoluteRemoteDeployDir()]);
             $this->uploadTemplate($ftp, $output, $resources . "script.htaccess",
                 FileUtils::append($remoteScriptDir, ".htaccess"),
-                array('AUTH_USER_FILE' => FileUtils::append($fs->getAbsoluteRemoteScriptDir(), ".htpasswd"),
-                    'HTACCESS' => $config['remote']['htaccess']));
+                ['AUTH_USER_FILE' => FileUtils::append($fs->getAbsoluteRemoteScriptDir(), ".htpasswd"),
+                    'HTACCESS' => $config['remote']['htaccess']]);
 
             $this->uploadTemplate($ftp, $output, $resources . "script.htpasswd",
                 FileUtils::append($remoteScriptDir, ".htpasswd"),
-                array('USER' => $config['remote']['authuser'],
-                    'PWD' => crypt($config['remote']['authpwd'])));
+                ['USER' => $config['remote']['authuser'],
+                    'PWD' => crypt($config['remote']['authpwd'])]);
 
 
         } else {
@@ -91,5 +97,6 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
             $ftp->upload($target, $source, FTP_BINARY, $callback);
 
         }
+        return 0;
     }
 }
