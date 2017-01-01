@@ -3,8 +3,8 @@ declare(strict_types = 1);
 namespace mheinzerling\dist;
 
 
+use mheinzerling\commons\ExtensionFtpConnection;
 use mheinzerling\commons\FileUtils;
-use mheinzerling\commons\FtpConnection;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +28,7 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         $rootHtaccess = FileUtils::append($fs->getRemoteDeployDir(), ".htaccess");
         $maintenance = isset($config['remote']['maintenance']) ? $config['remote']['maintenance'] : "";
 
-        $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
+        $ftp = new ExtensionFtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
 
         $content = $ftp->get($rootHtaccess);
         if ($content != null) {

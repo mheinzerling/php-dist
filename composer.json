@@ -18,7 +18,8 @@
     "mheinzerling/jsonutils": "dev-master",
     "mheinzerling/fileutils": "dev-master",
     "mheinzerling/stringutils": "dev-master",
-    "ext-ftp": "*"
+    "mheinzerling/ftputils": "dev-master",
+    "mheinzerling/vcsutils": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.6.0",
@@ -26,7 +27,7 @@
   },
   "autoload": {
     "psr-4": {
-      "mheinzerling\\": "src/"
+      "mheinzerling\\dist\\": "src/"
     }
   }
 }

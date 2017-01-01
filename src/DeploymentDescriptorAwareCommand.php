@@ -54,6 +54,7 @@ abstract class DeploymentDescriptorAwareCommand extends Command
         $progress->start();
         $callback = function ($serverSize, $localSize) use ($progress) {
             $progress->setProgress($serverSize);
+            $progress->setBarWidth($localSize);
         };
         $ftp->upload($target, $source, FTP_BINARY, $callback);
         $output->writeln("");

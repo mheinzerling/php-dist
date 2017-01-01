@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "27134a7c6c131affca4a6dcdd0dedb27",
-    "content-hash": "3b0e55a080615b1ea9b9dfdaf2601504",
+    "hash": "21296d69aa582ce7ecc8db5060590875",
+    "content-hash": "788981544d82100621ba6cf5313c39b8",
     "packages": [
         {
             "name": "eloquent/enumeration",
@@ -101,6 +101,47 @@
             "time": "2016-12-30 16:18:10"
         },
         {
+            "name": "mheinzerling/ftputils",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mheinzerling/php-ftputils.git",
+                "reference": "45806ba60919ba98b00976e2e37d6cac8ba6a2a4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mheinzerling/php-ftputils/zipball/45806ba60919ba98b00976e2e37d6cac8ba6a2a4",
+                "reference": "45806ba60919ba98b00976e2e37d6cac8ba6a2a4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ftp": "*",
+                "php": "^7.1.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "^5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "mheinzerling\\commons\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Heinzerling",
+                    "email": "webmaster@mheinzerling.de"
+                }
+            ],
+            "description": "FTP extension object wrapping.",
+            "time": "2017-01-01 16:03:36"
+        },
+        {
             "name": "mheinzerling/jsonutils",
             "version": "dev-master",
             "source": {
@@ -182,6 +223,46 @@
             ],
             "description": "StringUtils class is similar to Apache Commons StringUtils for Java. It will be extended incrementally.",
             "time": "2016-12-30 15:05:44"
+        },
+        {
+            "name": "mheinzerling/vcsutils",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mheinzerling/php-vcsutils.git",
+                "reference": "992ace0e9acb180c1a3f695970c6a1ec57be2a93"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mheinzerling/php-vcsutils/zipball/992ace0e9acb180c1a3f695970c6a1ec57be2a93",
+                "reference": "992ace0e9acb180c1a3f695970c6a1ec57be2a93",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "phpunit/phpunit": "^5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "mheinzerling\\commons\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Heinzerling",
+                    "email": "webmaster@mheinzerling.de"
+                }
+            ],
+            "description": "Collecting helper for Git and SVN.",
+            "time": "2017-01-01 16:00:07"
         },
         {
             "name": "psr/log",
@@ -2315,6 +2396,8 @@
         "mheinzerling/jsonutils": 20,
         "mheinzerling/fileutils": 20,
         "mheinzerling/stringutils": 20,
+        "mheinzerling/ftputils": 20,
+        "mheinzerling/vcsutils": 20,
         "codeclimate/php-test-reporter": 20
     },
     "prefer-stable": false,

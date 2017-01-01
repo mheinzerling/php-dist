@@ -16,7 +16,7 @@ if ((!$loader = includeIfExists(__DIR__ . '/../vendor/autoload.php')) && (!$load
 
 $application = new \Symfony\Component\Console\Application();
 $application->setName("Dist");
-$application->setVersion("0.1");
+$application->setVersion("3.0.0");
 $application->add(new \mheinzerling\dist\VersionCommand());
 $application->add(new \mheinzerling\dist\ZipCommand());
 $application->add(new \mheinzerling\dist\UploadCommand());

@@ -3,6 +3,7 @@ declare(strict_types = 1);
 namespace mheinzerling\dist;
 
 
+use mheinzerling\commons\ExtensionFtpConnection;
 use mheinzerling\commons\FtpConnection;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,8 +27,8 @@ class MaintenanceCommand extends DeploymentDescriptorAwareCommand
             if ($enable) {
                 $output->writeln("Maintenance Mode is already enabled");
             } else {
-                $success = $ftp->delete($maintenanceFlag);
-                if ($success) $output->writeln("Maintenance Mode disabled");
+                $ftp->delete($maintenanceFlag);
+                $output->writeln("Maintenance Mode disabled");
             }
         }
     }
@@ -43,7 +44,7 @@ class MaintenanceCommand extends DeploymentDescriptorAwareCommand
     protected function innerExecute(array $config, InputInterface $input, OutputInterface $output): int
     {
         $enable = $input->getArgument("status") !== "false";
-        $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
+        $ftp = new ExtensionFtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
         self::setMaintenance($ftp, $output, $enable);
         return 0;
     }

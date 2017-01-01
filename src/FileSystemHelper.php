@@ -22,7 +22,7 @@ class FileSystemHelper
     public function __construct(array $config)
     {
         $this->config = $config;
-        $root = stristr(__DIR__, "vendor") !== false ? __DIR__ . '/../../../../..' : __DIR__ . '/../../lib';
+        $root = stristr(__DIR__, "vendor") !== false ? __DIR__ . '/../../../../K:' : __DIR__ . '/../../lib';
         $this->root = FileUtils::to(realpath($root) . "/", Separator::UNIX());
     }
 

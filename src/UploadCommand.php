@@ -3,8 +3,8 @@ declare(strict_types = 1);
 namespace mheinzerling\dist;
 
 
+use mheinzerling\commons\ExtensionFtpConnection;
 use mheinzerling\commons\FileUtils;
-use mheinzerling\commons\FtpConnection;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +27,7 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
         $remoteScriptDir = $fs->getRemoteScriptDir();
         $localDistDir = $fs->getLocalDistDir();
 
-        $ftp = new FtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
+        $ftp = new ExtensionFtpConnection($config['ftp']['server'], $config['ftp']['user'], $config['ftp']['password']);
 
 
         $remoteFiles = array_flip($ftp->ls($remoteDistDir, '@dist.*\.zip@', true));
@@ -98,6 +98,7 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
             $progress->start();
             $callback = function ($serverSize, $localSize) use ($progress) {
                 $progress->setProgress($serverSize);
+                $progress->setBarWidth($localSize);
             };
             $ftp->upload($target, $source, FTP_BINARY, $callback);
 
