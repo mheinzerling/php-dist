@@ -11,14 +11,13 @@ class FtpConnection
      */
     private $connection_id;
 
-    public function __construct($server, $user, $password)
+    public function __construct(string $server, string $user, string $password)
     {
         $this->connection_id = ftp_connect($server);
-        ftp_pasv($this->connection_id, true);
-        $login_result = ftp_login($this->connection_id, $user, $password);
-        if ((!$this->connection_id) || (!$login_result)) {
-            throw new \Exception("Connection failed"); //TODO
-        }
+        if ($this->connection_id === false) throw new \Exception("Connection failed"); //TODO
+        if (ftp_pasv($this->connection_id, true)) throw new \Exception("Passive mode failed"); //TODO
+        if (!(ftp_login($this->connection_id, $user, $password))) throw new \Exception("Invalid login"); //TODO
+        ftp_pasv($this->connection_id, true); // fill be false, but seems to be required
     }
 
 

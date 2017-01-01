@@ -7,6 +7,7 @@ namespace mheinzerling\dist;
 use mheinzerling\commons\FtpConnection;
 use mheinzerling\commons\JsonUtils;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,12 +50,11 @@ abstract class DeploymentDescriptorAwareCommand extends Command
         $stats = fstat($source);
         fseek($source, 0);
 
-        $progress = $this->getHelper("progress");
+        $progress = new ProgressBar($output, $stats['size']);
+        $progress->start();
         $callback = function ($serverSize, $localSize) use ($progress) {
-            $progress->setCurrent($serverSize, true);
+            $progress->setProgress($serverSize);
         };
-
-        $progress->start($output, $stats['size']);
         $ftp->upload($target, $source, FTP_BINARY, $callback);
         $output->writeln("");
     }

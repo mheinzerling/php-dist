@@ -58,17 +58,17 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         $choice = $dialog->ask($input, $output, new ChoiceQuestion("Select dist to deploy", $selection, 0));
 
 
-        if ($choice == 0) {
+        if ($choice == $selection[0]) {
             $output->writeln("Abort deployment");
             return 0;
         }
 
-        $template = __DIR__ . "/../../../remote/root.htaccess";
+        $template = __DIR__ . "/../../remote/root.htaccess";
 
         MaintenanceCommand::setMaintenance($ftp, $output, true);
         $this->uploadTemplate($ftp, $output, $template, $rootHtaccess,
             [
-                'VERSION' => FileUtils::append($fs->getRemoteDeployDir(), $selection[$choice]),
+                'VERSION' => FileUtils::append($fs->getRemoteDeployDir(), $choice),
                 '/PATH' => $fs->hasPath() ? ("/" . $config['remote']['path']) : ""
             ]
         );
@@ -93,7 +93,14 @@ class DeployCommand extends DeploymentDescriptorAwareCommand
         return 0;
     }
 
-    protected function createBasicAuthContext(string $user, string $password, $agent = "", $method = "GET"): resource
+    /**
+     * @param string $user
+     * @param string $password
+     * @param string $agent
+     * @param string $method
+     * @return resource
+     */
+    protected function createBasicAuthContext(string $user, string $password, $agent = "", $method = "GET")
     {
         $opts = ['http' =>
             [

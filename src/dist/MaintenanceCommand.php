@@ -13,7 +13,7 @@ class MaintenanceCommand extends DeploymentDescriptorAwareCommand
 
     public static function setMaintenance(FtpConnection $ftp, OutputInterface $output, bool $enable): void
     {
-        $maintenanceFlag = (new FileSystemHelper(null))->getMaintenanceFlag();
+        $maintenanceFlag = (new FileSystemHelper([]))->getMaintenanceFlag();
 
         if ($ftp->get($maintenanceFlag) == null) {
             if ($enable) {

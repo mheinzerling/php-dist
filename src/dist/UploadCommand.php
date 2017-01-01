@@ -5,6 +5,7 @@ namespace mheinzerling\dist;
 
 use mheinzerling\commons\FileUtils;
 use mheinzerling\commons\FtpConnection;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -45,37 +46,37 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
         $choice = $dialog->ask($input, $output, new ChoiceQuestion("Select file to upload", $selection, 0));
 
 
-        if ($choice == 0) {
+        if ($choice == $selection[0]) {
             $output->writeln("Abort upload");
             return 0;
         }
 
-        $progress = $this->getHelper("progress");
-        $callback = function ($serverSize, $localSize) use ($progress) {
-            $progress->setCurrent($serverSize, true);
-        };
 
-        if ($choice == 1) {
-            $resources = __DIR__ . "/../../../remote/";
-
+        if ($choice == $selection[1]) {
+            $resources = __DIR__ . "/../../remote/";
+            $output->write("Starting setup of deployment script ...\n");
             if (!$ftp->ls($remoteScriptDir)) {
                 $output->write("Creating >" . $remoteScriptDir . "< ...\n");
                 $ftp->mkdir($remoteScriptDir);
+                $output->write("... done\n");
+            } else {
+                $output->write(">" . $remoteScriptDir . "< already exists\n");
             }
-
+            $output->write("Uploading unzip.php\n");
             $this->uploadTemplate($ftp, $output, $resources . "unzip.php",
                 FileUtils::append($remoteScriptDir, "unzip.php"),
                 ['SCRIPT_DIR' => $fs->getAbsoluteRemoteScriptDir(),
                     'DEPLOY_DIR' => $fs->getAbsoluteRemoteDeployDir()]);
+            $output->write("Uploading .htaccess\n");
             $this->uploadTemplate($ftp, $output, $resources . "script.htaccess",
                 FileUtils::append($remoteScriptDir, ".htaccess"),
                 ['AUTH_USER_FILE' => FileUtils::append($fs->getAbsoluteRemoteScriptDir(), ".htpasswd"),
                     'HTACCESS' => $config['remote']['htaccess']]);
-
+            $output->write("Uploading .htpasswd\n");
             $this->uploadTemplate($ftp, $output, $resources . "script.htpasswd",
                 FileUtils::append($remoteScriptDir, ".htpasswd"),
                 ['USER' => $config['remote']['authuser'],
-                    'PWD' => crypt($config['remote']['authpwd'])]);
+                    'PWD' => password_hash($config['remote']['authpwd'], PASSWORD_BCRYPT)]);
 
 
         } else {
@@ -90,10 +91,14 @@ class UploadCommand extends DeploymentDescriptorAwareCommand
                 $ftp->mkdir($remoteDistDir);
             }
 
-            $name = str_replace(" (Overwrite)", "", $selection[$choice]);
+            $name = str_replace(" (Overwrite)", "", $choice);
             $source = FileUtils::append($localDistDir, $name);
             $target = FileUtils::append($remoteDistDir, $name);
-            $progress->start($output, filesize($source));
+            $progress = new ProgressBar($output, filesize($source));
+            $progress->start();
+            $callback = function ($serverSize, $localSize) use ($progress) {
+                $progress->setProgress($serverSize);
+            };
             $ftp->upload($target, $source, FTP_BINARY, $callback);
 
         }
