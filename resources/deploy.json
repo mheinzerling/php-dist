@@ -1,18 +1,29 @@
 {
   "name": "test.example.com",
-  "ftp": {
-    "server": "test.example.com",
-    "user": "username",
-    "password": "password"
-  },
   "remote": {
     "root": "/var/www/test",
+    "ftp": {
+      "server": "test.example.com",
+      "user": "username",
+      "password": "password"
+    },
     "deployDir": "",
     "scriptDir": "deploy",
     "authuser": "test",
     "authpwd": "test",
     "htaccess": "AddHandler php53-cgi .php",
-    "url": "test.example.com"
+    "url": "test.example.com",
+    "maintenance": "",
+    "callback": {
+      "afterDeploy": [
+        {
+          "url": "url",
+          "method": "GET",
+          "authuser": "user",
+          "authpwd": "password"
+        }
+      ]
+    }
   },
   "local": {
     "distDir": "deploy/test.example.com/dist",
@@ -63,16 +74,6 @@
       "installed.json",
       "Security/Acl",
       "openid/identifier_request.html"
-    ]
-  },
-  "callback": {
-    "afterDeploy": [
-      {
-        "url": "url",
-        "method": "GET",
-        "authuser": "user",
-        "authpwd": "password"
-      }
     ]
   }
 }

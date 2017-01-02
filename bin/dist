@@ -17,9 +17,9 @@ if ((!$loader = includeIfExists(__DIR__ . '/../vendor/autoload.php')) && (!$load
 $application = new \Symfony\Component\Console\Application();
 $application->setName("Dist");
 $application->setVersion("3.0.0");
-$application->add(new \mheinzerling\dist\VersionCommand());
-$application->add(new \mheinzerling\dist\ZipCommand());
-$application->add(new \mheinzerling\dist\UploadCommand());
-$application->add(new \mheinzerling\dist\DeployCommand());
-$application->add(new \mheinzerling\dist\MaintenanceCommand());
+$application->add(new \mheinzerling\dist\bin\VersionCommand());
+$application->add(new \mheinzerling\dist\bin\ZipCommand());
+$application->add(new \mheinzerling\dist\bin\UploadCommand());
+$application->add(new \mheinzerling\dist\bin\DeployCommand());
+$application->add(new \mheinzerling\dist\bin\MaintenanceCommand());
 $application->run();

@@ -29,5 +29,10 @@
     "psr-4": {
       "mheinzerling\\dist\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "mheinzerling\\dist\\": "tests/"
+    }
   }
 }
