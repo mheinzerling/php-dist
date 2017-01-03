@@ -106,12 +106,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mheinzerling/php-ftputils.git",
-                "reference": "45806ba60919ba98b00976e2e37d6cac8ba6a2a4"
+                "reference": "c080c7baef68a8614fee5f24f915fb6c170d62ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mheinzerling/php-ftputils/zipball/45806ba60919ba98b00976e2e37d6cac8ba6a2a4",
-                "reference": "45806ba60919ba98b00976e2e37d6cac8ba6a2a4",
+                "url": "https://api.github.com/repos/mheinzerling/php-ftputils/zipball/c080c7baef68a8614fee5f24f915fb6c170d62ef",
+                "reference": "c080c7baef68a8614fee5f24f915fb6c170d62ef",
                 "shasum": ""
             },
             "require": {
@@ -139,7 +139,7 @@
                 }
             ],
             "description": "FTP extension object wrapping.",
-            "time": "2017-01-01 16:03:36"
+            "time": "2017-01-03 05:37:42"
         },
         {
             "name": "mheinzerling/jsonutils",

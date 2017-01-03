@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace mheinzerling\dist\bin;
 
-use mheinzerling\dist\NoopFtpConnection;
+use mheinzerling\commons\NoopFtpConnection;
 use mheinzerling\dist\TestOutput;
 
 class MaintenanceCommandTest extends \PHPUnit_Framework_TestCase
