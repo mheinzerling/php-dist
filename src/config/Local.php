@@ -26,7 +26,7 @@ class Local
         $this->distDir = rtrim(FileUtils::to(JsonUtils::required($json, "distDir"), Separator::UNIX()), Separator::UNIX) . Separator::UNIX;
         $this->overwriteDir = rtrim(FileUtils::to(JsonUtils::required($json, "overwriteDir"), Separator::UNIX()), Separator::UNIX) . Separator::UNIX;
 
-        $root = stristr(__DIR__, "vendor") !== false ? __DIR__ . '/../../../../' : __DIR__ . '/../..';
+        $root = stristr(__DIR__, "vendor") !== false ? __DIR__ . '/../../../../..' : __DIR__ . '/../..';
         $this->root = FileUtils::to(realpath($root) . "/", Separator::UNIX());
     }
 
