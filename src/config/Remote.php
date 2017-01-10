@@ -113,6 +113,11 @@ class Remote
         return FileUtils::append($this->root, $this->scriptDir);
     }
 
+    public function getAbsoluteScriptFile($file)
+    {
+        return FileUtils::append($this->getAbsoluteScriptDirectory(), $file);
+    }
+
     public function getAbsoluteArchiveDirectory(): string
     {
         return FileUtils::append($this->root, $this->getArchiveDirectory());
@@ -158,7 +163,7 @@ class Remote
         return [
             'SCRIPT_DIR' => $this->getAbsoluteScriptDirectory(),
             'DEPLOY_DIR' => $this->getAbsoluteDeployDirectory(),
-            'AUTH_USER_FILE' => $this->getScriptFile(".htpasswd"),
+            'AUTH_USER_FILE' => $this->getAbsoluteScriptFile(".htpasswd"),
             'HTACCESS' => $this->htaccess,
             'USER' => $this->authuser,
             'PWD' => password_hash($this->authpwd, PASSWORD_BCRYPT) //TODO move to json
@@ -168,7 +173,7 @@ class Remote
 
     public function getHtaccess(): string
     {
-        return FileUtils::append($this->getDeployDirectory(), ".htaccess");
+        return trim(FileUtils::append($this->getDeployDirectory(), ".htaccess"), "/");
     }
 
     public function currentVersion(): string
@@ -235,7 +240,7 @@ class Remote
         $opts['http']['content'] = '';
         if ($userAgent != null) $opts['http']['user_agent'] = $userAgent;
         if ($method != null) $opts['http']['method'] = $method;
-        if ($user != null) $opts['http']['method'] = "Content-Type: text/html\r\n" .
+        if ($user != null) $opts['http']['header'] = "Content-Type: text/html\r\n" .
             "Authorization: Basic " . base64_encode($user . ":" . $password) . "\r\n";
         return stream_context_create($opts);
     }
